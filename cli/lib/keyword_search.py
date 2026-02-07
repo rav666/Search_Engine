@@ -1,13 +1,51 @@
-from lib.search_utils import load_movies, load_stopwords
+import pickle
+
+from lib.search_utils import load_movies,load_stopwords,CACHE_PATH
 import string
 from nltk.stem import PorterStemmer
-
+from collections import defaultdict
+import os
 stemmer = PorterStemmer()
+
+class InvertedIndex:
+    def __init__(self):
+        self.index = defaultdict(set)
+        self.docmap = {}
+        self.index_path = CACHE_PATH/'index.pkl'
+        self.docmap_path = CACHE_PATH/'docmap.pkl'
+    def _add_document(self, doc_id, text):
+        tokens = tokenize_text(text)
+        for token in set(tokens):
+            self.index[token].add(doc_id)
+    def get_document(self, term):
+        result = sorted(self.index[term])
+        return list(result)
+
+    def build(self):
+        movies = load_movies()
+        for movie in movies:
+            text = f"{movie['title']}, {movie['description']}"
+            self._add_document(movie['id'], text)
+            self.docmap[movie['id']] = movie
+    def save(self):
+        os.makedirs(CACHE_PATH, exist_ok=True)
+        with open(self.index_path, mode='wb') as f:
+            pickle.dump(self.index, f)
+        with open(self.docmap_path, mode='wb') as f:
+            pickle.dump(self.docmap, f)
+
+def build_command():
+    idx = InvertedIndex()
+    idx.build()
+    idx.save()
+    docs = idx.get_document("merida")
+    print(f"firstdoc: {docs[0]}")
+
+
+
 def clean_text(text):
     text= text.lower()
-
     text = text.translate(str.maketrans('', '', string.punctuation))
-
     return text
 
 

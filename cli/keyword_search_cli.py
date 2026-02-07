@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
 import argparse
-from lib.keyword_search import search_movies
+from lib.keyword_search import search_movies, build_command
 
 def main()->None:
     parser = argparse.ArgumentParser(description='Keyword Search CLI')
     subparsers = parser.add_subparsers(dest='command', help='Available commands')
     search_parser = subparsers.add_parser('search', help='Search movies using BM25')
+    build_parser = subparsers.add_parser('build', help='Search movies using BM25')
     search_parser.add_argument('query',type=str, help='Search Query')
+
     args = parser.parse_args()
     match args.command:
         case 'search':
@@ -16,7 +18,8 @@ def main()->None:
             results = search_movies(args.query, 5)
             for i, result in enumerate(results):
                 print(f"{i+1}, {result['title']}")
-
+        case 'build':
+            build_command()
         case _:
             print('Searching movies using Google Search')
             # parser.print_help()
