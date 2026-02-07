@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+from lib.keyword_search import search_movies
 
 def main()->None:
     parser = argparse.ArgumentParser(description='Keyword Search CLI')
@@ -10,7 +11,12 @@ def main()->None:
     args = parser.parse_args()
     match args.command:
         case 'search':
-            print(f"Searching for args.query: {args.query}")
+
+            print(f"Searching for: {args.query}")
+            results = search_movies(args.query, 5)
+            for i, result in enumerate(results):
+                print(f"{i+1}, {result['title']}")
+
         case _:
             print('Searching movies using Google Search')
             # parser.print_help()
