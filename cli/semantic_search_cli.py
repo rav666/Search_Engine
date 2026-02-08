@@ -14,7 +14,7 @@ def main():
     embed.add_argument("text", help="text to embed (PROTOTYPE)")
     verify_embedding = subparsers.add_parser("verify_embeddings", help="LOADING OR CREATING EMBEDDINGS")
     embed_query = subparsers.add_parser("embedquery", help="MAKING EMBEDDINGS FOR THE SEARCH TEXT")
-    embed_query.add_argument("query", type=str, help="TEXT U WANT TO SEARCH IN MOVIES")
+    embed_query.add_argument("query", type=str, help="user query")
     args = parser.parse_args()
 
     match args.command:
