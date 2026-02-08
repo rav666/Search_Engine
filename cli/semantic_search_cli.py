@@ -2,7 +2,7 @@
 
 import argparse
 
-from lib.semantic_search import verify_model, embed_text, verify_embeddings, embed_query_text
+from lib.semantic_search import verify_model, embed_text, verify_embeddings, embed_query_text, search
 
 
 def main():
@@ -15,9 +15,16 @@ def main():
     verify_embedding = subparsers.add_parser("verify_embeddings", help="LOADING OR CREATING EMBEDDINGS")
     embed_query = subparsers.add_parser("embedquery", help="MAKING EMBEDDINGS FOR THE SEARCH TEXT")
     embed_query.add_argument("query", type=str, help="user query")
+
+    searcher_query = subparsers.add_parser("search", help="Search")
+    searcher_query.add_argument("query", type=str, help="user query to search in final search")
+    searcher_query.add_argument("limit", type=int, default=5, help="Number of searches to display")
+
     args = parser.parse_args()
 
     match args.command:
+        case 'search':
+            search(args.query, args.limit)
         case "embedquery":
             embed_query_text(args.query)
         case "verify_embeddings":
@@ -25,9 +32,7 @@ def main():
         case 'verify':
             verify_model()
         case 'embed_text':
-
             embed_text(args.text)
-
         case _:
             parser.print_help()
 
