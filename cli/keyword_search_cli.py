@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import argparse
-from lib.keyword_search import search_movies, build_command
+from lib.keyword_search import search_movies, build_command, tf_command
+
 
 def main()->None:
     parser = argparse.ArgumentParser(description='Keyword Search CLI')
@@ -9,6 +10,9 @@ def main()->None:
     search_parser = subparsers.add_parser('search', help='Search movies using BM25')
     build_parser = subparsers.add_parser('build', help='Search movies using BM25')
     search_parser.add_argument('query',type=str, help='Search Query')
+    tf_parser = subparsers.add_parser('tf', help='Search movies using TF')
+    tf_parser.add_argument('id',type=int, help='DOC ID')
+    tf_parser.add_argument('term',type=str, help='WORD WHOSE FREQUENCY U WANT')
 
     args = parser.parse_args()
     match args.command:
@@ -20,6 +24,8 @@ def main()->None:
                 print(f"{i+1}, {result['title']}")
         case 'build':
             build_command()
+        case 'tf':
+            tf_command(args.id, args.term)
         case _:
             print('Searching movies using Google Search')
             # parser.print_help()
