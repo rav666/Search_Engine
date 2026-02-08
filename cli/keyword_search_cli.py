@@ -2,7 +2,8 @@
 
 import argparse
 
-from lib.keyword_search import search_movies, build_command, tf_command, idf_command, tfidf_command, bm25_idf_command
+from lib.keyword_search import search_movies, build_command, tf_command, idf_command, tfidf_command, bm25_idf_command, \
+    bm25_tf_command
 
 
 def main() -> None:
@@ -18,8 +19,12 @@ def main() -> None:
     idf_parser = subparsers.add_parser('idf', help='IDF')
     idf_parser.add_argument('term', type=str, help='Inverse Document Frequency')
 
-    bm25_idf_parser = subparsers.add_parser('bm25idf', help='BM25 IDF')
-    bm25_idf_parser.add_argument('term', type=str, help='BM25 Inverse Document Frequency')
+    bm25tf_parser = subparsers.add_parser('bm25tf', help='Calculate term frequency')
+    bm25tf_parser.add_argument('id', type=int, help='DOC ID(BM25)')
+    bm25tf_parser.add_argument('term', type=str, help='WORD WHOSE FREQUENCY U WANT (BM25)')
+
+    bm25_idf_parser = subparsers.add_parser('bm25idf', help='IDF(BM25)')
+    bm25_idf_parser.add_argument('term', type=str, help='Inverse Document Frequency(BM25)')
 
     tfidf_parser = subparsers.add_parser('tfidf', help='Calculate term frequency inverse document frequency')
     tfidf_parser.add_argument('id', type=int, help='tfidf term')
@@ -37,6 +42,8 @@ def main() -> None:
             build_command()
         case 'tf':
             tf_command(args.id, args.term)
+        case 'bm25tf':
+            bm25_tf_command(args.id, args.term)
         case 'idf':
             idf_command(args.term)
         case 'bm25idf':

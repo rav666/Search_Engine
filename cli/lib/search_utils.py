@@ -4,7 +4,7 @@ from pathlib import Path
 project_root = Path(__file__).resolve().parent.parent.parent
 data_path = project_root/'data'/'movies.json'
 stopwords_path = project_root/'data'/'stopwords.txt'
-
+BM25_K1 = 1.5
 CACHE_PATH = project_root/'cache'
 
 def load_movies()->list[dict]:
