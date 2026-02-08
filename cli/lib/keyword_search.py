@@ -52,7 +52,14 @@ class InvertedIndex:
         idf = self.get_idf(term)
         return tf * idf
 
-
+    def get_bm25_idf(self, term: str) -> float:
+        tokens = tokenize_text(term)
+        if len(tokens) != 1:
+            raise ValueError("can only have 1 tokens")
+        token = tokens[0]
+        doc_count = len(self.docmap)
+        term_doc_count = len(self.index[token])
+        return math.log((doc_count - term_doc_count + 0.5) / (term_doc_count + 0.5) + 1)
 
     def build(self):
         movies = load_movies()
@@ -86,6 +93,7 @@ def build_command():
     # docs = idx.get_document("merida")
     # print(f"firstdoc: {docs[0]}")
 
+
 def tf_command(doc_id, term):
     idx = InvertedIndex()
     idx.load()
@@ -100,12 +108,17 @@ def tfidf_command(doc_id, term):
     tfidf = idx.get_tfidf(term, doc_id)
     print(f"TF-IDF score of {term} in doc {doc_id} is {tfidf}.")
 
+
 def idf_command(term):
     idx = InvertedIndex()
     idx.load()
     print(f"{term=}, {idx.get_idf(term):.2f}")
 
 
+def bm25_idf_command(term):
+    idx = InvertedIndex()
+    idx.load()
+    print(f"{term=}, {idx.get_bm25_idf(term):.2f}")
 
 
 def clean_text(text):
