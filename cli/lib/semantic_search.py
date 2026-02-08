@@ -63,3 +63,11 @@ def embed_text(text):
     print(f"embedding text: {text}")
     print(f"first three dimensions: {embeddings[:3]}")
     print(f"dimensions: {embeddings.shape[0]}")
+
+
+def embed_query_text(query):
+    ss = SemanticSearch()
+    embeddings = ss.generate_embeddings(query)
+    print(f"embedding text: {query}")
+    print(f"first three dimensions: {embeddings[:3]}")
+    print(f"dimensions: {embeddings.shape[0]}")
