@@ -78,6 +78,35 @@ class InvertedIndex:
         term_doc_count = len(self.index[token])
         return math.log((doc_count - term_doc_count + 0.5) / (term_doc_count + 0.5) + 1)
 
+    def bm25(self, doc_id, term, k1=BM25_K1, b=BM25_B):
+        tf = self.bm25_get_tf(doc_id, term, k1=k1, b=b)
+        idf = self.get_bm25_idf(term)
+        return tf * idf
+
+    def bm25_search(self, query, limit=5):
+        query_tokens = tokenize_text(query)
+        scores = {}
+        for doc_id in self.docmap:
+            score = 0
+            for token in query_tokens:
+                score += self.bm25(doc_id, token, BM25_K1, BM25_B)
+            scores[doc_id] = score
+        sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+        results = sorted_scores[:limit]
+        formatted_results = []
+        for doc_id, score in results:
+            title = self.docmap[doc_id]['title']
+            formatted_results.append({
+                "doc_id": doc_id,
+                "title": title,
+                "score": score,
+            })
+        return formatted_results
+
+
+
+
+
     def build(self):
         movies = load_movies()
         for movie in movies:
@@ -119,6 +148,13 @@ def tf_command(doc_id, term):
     idx = InvertedIndex()
     idx.load()
     print(idx.get_tf(doc_id, term))
+
+
+def bm25_command(query):
+    idx = InvertedIndex()
+    idx.load()
+    return idx.bm25_search(query)
+
 
 
 def bm25_tf_command(doc_id, term, b=BM25_B):
