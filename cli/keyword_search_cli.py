@@ -8,9 +8,9 @@ from lib.keyword_search import search_movies, build_command, tf_command, idf_com
 def main() -> None:
     parser = argparse.ArgumentParser(description='Keyword Search CLI')
     subparsers = parser.add_subparsers(dest='command', help='Available commands')
-    search_parser = subparsers.add_parser('search', help='Search movies using BM25')
+    search_parser = subparsers.add_parser('search', help='Search movies')
     search_parser.add_argument('query', type=str, help='Search Query')
-    build_parser = subparsers.add_parser('build', help='Search movies using BM25')
+    build_parser = subparsers.add_parser('build', help='Just build it')
 
     tf_parser = subparsers.add_parser('tf', help='Calculate term frequency')
     tf_parser.add_argument('id', type=int, help='DOC ID')
