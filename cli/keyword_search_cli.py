@@ -2,7 +2,7 @@
 
 import argparse
 
-from lib.keyword_search import search_movies, build_command, tf_command, idf_command
+from lib.keyword_search import search_movies, build_command, tf_command, idf_command, tfidf_command
 
 
 def main() -> None:
@@ -18,6 +18,10 @@ def main() -> None:
     idf_parser = subparsers.add_parser('idf', help='IDF')
     idf_parser.add_argument('term', type=str, help='Inverse Document Frequency')
 
+    tfidf_parser = subparsers.add_parser('tfidf', help='Calculate term frequency inverse document frequency')
+    tfidf_parser.add_argument('id', type=int, help='tfidf term')
+    tfidf_parser.add_argument('term', type=str, help='tfidf id')
+
     args = parser.parse_args()
     match args.command:
         case 'search':
@@ -32,6 +36,8 @@ def main() -> None:
             tf_command(args.id, args.term)
         case 'idf':
             idf_command(args.term)
+        case 'tfidf':
+            tfidf_command(args.id, args.term)
         case _:
             print('Searching movies using Google Search')
             # parser.print_help()

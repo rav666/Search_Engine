@@ -47,6 +47,13 @@ class InvertedIndex:
 
         return math.log((doc_count + 1) / (term_doc_count + 1))
 
+    def get_tfidf(self, term, doc_id):
+        tf = self.get_tf(doc_id, term)
+        idf = self.get_idf(term)
+        return tf * idf
+
+
+
     def build(self):
         movies = load_movies()
         for movie in movies:
@@ -82,13 +89,21 @@ def build_command():
 def tf_command(doc_id, term):
     idx = InvertedIndex()
     idx.load()
-    print (idx.get_tf(doc_id, term))
+    print(idx.get_tf(doc_id, term))
 
+
+def tfidf_command(doc_id, term):
+    idx = InvertedIndex()
+    idx.load()
+    # tf = idx.get_tf(doc_id, term)
+    # idf = idx.get_idf(term)
+    tfidf = idx.get_tfidf(term, doc_id)
+    print(f"TF-IDF score of {term} in doc {doc_id} is {tfidf}.")
 
 def idf_command(term):
     idx = InvertedIndex()
     idx.load()
-    print(f"{term=}, {idx.get_idf(term)}")
+    print(f"{term=}, {idx.get_idf(term):.2f}")
 
 
 
