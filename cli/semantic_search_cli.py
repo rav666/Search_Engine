@@ -3,7 +3,7 @@
 import argparse
 
 from lib.semantic_search import verify_model, embed_text, verify_embeddings, embed_query_text, search, chunk_text, \
-    chunk_text_semantic
+    chunk_text_semantic, embed_chunks
 
 
 def main():
@@ -30,10 +30,13 @@ def main():
     semantic_chunks.add_argument("overlap", type=int, default=5, help="Number of overlaps(semantic)")
 
     semantic_chunks.add_argument("chunk_size", type=int, default=5, help="Number of chunks(semantic)")
+    embed_chunk = subparsers.add_parser("embed_chunks", help="Making semantic chunks")
 
     args = parser.parse_args()
 
     match args.command:
+        case 'embed_chunks':
+            embed_chunks()
         case 'semantic_chunk':
             chunk_text_semantic(args.query, args.overlap, args.chunk_size)
         case 'search':
