@@ -21,7 +21,10 @@ def main():
     searcher_query.add_argument("limit", type=int, default=5, help="Number of searches to display")
     chunks = subparsers.add_parser("chunk", help="Chunkinggg express")
     chunks.add_argument("query", type=str, help="user text to chunk")
+    chunks.add_argument("overlap", type=int, default=5, help="Number of overlaps")
+
     chunks.add_argument("chunk_size", type=int, default=5, help="Number of chunks")
+
 
     args = parser.parse_args()
 
@@ -30,7 +33,7 @@ def main():
         case 'search':
             search(args.query, args.limit)
         case 'chunk':
-            chunk_text(args.query, args.chunk_size)
+            chunk_text(args.query, args.overlap, args.chunk_size)
         case "embed_query":
             embed_query_text(args.query)
         case "verify_embeddings":
