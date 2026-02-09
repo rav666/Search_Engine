@@ -2,7 +2,8 @@
 
 import argparse
 
-from lib.semantic_search import verify_model, embed_text, verify_embeddings, embed_query_text, search, chunk_text
+from lib.semantic_search import verify_model, embed_text, verify_embeddings, embed_query_text, search, chunk_text, \
+    chunk_text_semantic
 
 
 def main():
@@ -22,14 +23,19 @@ def main():
     chunks = subparsers.add_parser("chunk", help="Chunkinggg express")
     chunks.add_argument("query", type=str, help="user text to chunk")
     chunks.add_argument("overlap", type=int, default=5, help="Number of overlaps")
-
     chunks.add_argument("chunk_size", type=int, default=5, help="Number of chunks")
 
+    semantic_chunks = subparsers.add_parser("semantic_chunk", help="Making semantic chunks")
+    semantic_chunks.add_argument("query", type=str, help="user text to chunk(semantic)")
+    semantic_chunks.add_argument("overlap", type=int, default=5, help="Number of overlaps(semantic)")
+
+    semantic_chunks.add_argument("chunk_size", type=int, default=5, help="Number of chunks(semantic)")
 
     args = parser.parse_args()
 
     match args.command:
-
+        case 'semantic_chunk':
+            chunk_text_semantic(args.query, args.overlap, args.chunk_size)
         case 'search':
             search(args.query, args.limit)
         case 'chunk':

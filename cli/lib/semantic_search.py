@@ -1,3 +1,5 @@
+import re
+
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
@@ -57,6 +59,26 @@ class SemanticSearch:
                 'description': doc['description'][100],
             })
         return results
+
+
+def semantic_chunk(text, overlap=0, max_chunk_size=4):
+    sentences = re.split(r"(?<=[.!?])\s+", text)
+    # print(f"sentences: {sentences}")
+    chunks = []
+    step_size = max_chunk_size - overlap
+    for i in range(0, len(sentences), step_size):
+        chunk_sentences = sentences[i:i + max_chunk_size]
+        if len(chunk_sentences) <= overlap:
+            break
+        chunks.append(" ".join(chunk_sentences))
+    # print(f"chunks: {chunks}, max_chunk_size: {max_chunk_size}, overlap: {overlap}")
+    return chunks
+
+
+def chunk_text_semantic(text, overlap=0, max_chunk_size=4):
+    chunks = semantic_chunk(text, overlap, max_chunk_size)
+    for i, chunk in enumerate(chunks):
+        print(f"{i + 1}. {chunk}")
 
 
 def fixed_sized_chunks(text, overlap: int, chunk_size=200):
