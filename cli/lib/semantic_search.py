@@ -146,16 +146,20 @@ def embed_chunks():
     print(f"generated{len(embeddings)} chunked embeddings")
 
 def semantic_chunk(text, overlap=0, max_chunk_size=4):
+    text = text.strip()
+    if not text:
+        return []
+
     sentences = re.split(r"(?<=[.!?])\s+", text)
-    # print(f"sentences: {sentences}")
+
     chunks = []
     step_size = max_chunk_size - overlap
+    sentences = [s.strip() for s in sentences if s.strip()]
     for i in range(0, len(sentences), step_size):
         chunk_sentences = sentences[i:i + max_chunk_size]
         if len(chunk_sentences) <= overlap:
             break
         chunks.append(" ".join(chunk_sentences))
-    # print(f"chunks: {chunks}, max_chunk_size: {max_chunk_size}, overlap: {overlap}")
     return chunks
 
 
