@@ -100,6 +100,7 @@ class InvertedIndex:
                 "doc_id": doc_id,
                 "title": title,
                 "score": score,
+                "description": self.docmap[doc_id]['description'],
             })
         return formatted_results
 
