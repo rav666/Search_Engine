@@ -30,3 +30,9 @@ def rewrite_query(query):
     with open(PROMPT_PATH / 'rewrite.md', mode='r') as f:
         prompt = f.read()
     return generate_content(prompt, query)
+
+
+def expand_query(query):
+    with open(PROMPT_PATH / 'expand.md', mode='r') as f:
+        prompt = f.read()
+    return generate_content(prompt, query)

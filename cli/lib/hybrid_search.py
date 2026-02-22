@@ -1,6 +1,6 @@
 import os
 
-from lib.llm import correct_spellings, rewrite_query
+from lib.llm import correct_spellings, rewrite_query, expand_query
 from lib.search_utils import load_movies
 from .keyword_search import InvertedIndex
 from .semantic_search import ChunkedSemanticSearch
@@ -19,6 +19,11 @@ def rrf_search(query, k=60, limit=5, enhance=None):
             new_query = rewrite_query(query)
             print(f"original query {query}->enhanced query: {new_query}")
             query = new_query
+        case 'expand':
+            new_query = expand_query(query)
+            print(f"original query {query}->enhanced query: {new_query}")
+            query = new_query
+
 
     results = hs.rrf_search(query, k, limit)
     for idx, result in enumerate(results[:limit]):
