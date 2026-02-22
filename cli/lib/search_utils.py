@@ -7,6 +7,7 @@ stopwords_path = project_root/'data'/'stopwords.txt'
 BM25_K1 = 1.5
 BM25_B = 0.75
 CACHE_PATH = project_root/'cache'
+PROMPT_PATH = project_root / 'cli' / 'lib' / 'prompts'
 
 def load_movies()->list[dict]:
     with open(data_path, mode='r') as f:
