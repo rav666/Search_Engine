@@ -1,12 +1,13 @@
 import os
 
 from lib.llm import correct_spellings, rewrite_query, expand_query
+from lib.rerank import individual_rerank, batch_rerank
 from lib.search_utils import load_movies
 from .keyword_search import InvertedIndex
 from .semantic_search import ChunkedSemanticSearch
 
 
-def rrf_search(query, k=60, limit=5, enhance=None):
+def rrf_search(query, k=60, limit=5, enhance=None, rerank_method=None):
     movies = load_movies()
     hs = HybridSearch(movies)
 
@@ -24,9 +25,19 @@ def rrf_search(query, k=60, limit=5, enhance=None):
             print(f"original query {query}->enhanced query: {new_query}")
             query = new_query
 
+    rrf_limit = limit * 5 if rerank_method else 5
+    results = hs.rrf_search(query, k=k, limit=rrf_limit)
+    match rerank_method:
+        case "individual":
+            results = individual_rerank(query, results)
+            print(f"reranking top{limit} using individual method")
+        case "batch":
+            results = batch_rerank(query, results)
+            print(f"reranking top{limit} using batch rerank method")
+        case _:
+            pass
 
-    results = hs.rrf_search(query, k, limit)
-    for idx, result in enumerate(results[:limit]):
+    for idx, result in enumerate(results[:rrf_limit]):
         print(f'{idx + 1}: {result['title']}')
         print(f"RRF SCORE:, {result['rrf_score']}")
         print(f"BM25 rank:, {result['bm25_rank']}, Semantic rank: {result['sem_rank']} ")
@@ -68,8 +79,8 @@ class HybridSearch:
     def rrf_search(self, query, k, limit=10):
         bm25_results = self._bm25_search(query, limit * 500)
         sem_results = self.semantic_search.search_chunks(query, limit * 500)
-        combined_results = rrf_combine_search_results(bm25_results, sem_results, k)
-        return combined_results
+        combined_results = rrf_combine_search_results(bm25_results, sem_results, k, limit)
+        return combined_results[:limit]
 
 
 
@@ -87,7 +98,7 @@ def rrf_final_score(r1, r2, k):
     return 0.
 
 
-def rrf_combine_search_results(bm25_results, sem_results, k):
+def rrf_combine_search_results(bm25_results, sem_results, k, limit):
     scores = {}
     for rank, result in enumerate(bm25_results, start=1):
         doc_id = result['doc_id']
@@ -118,7 +129,7 @@ def rrf_combine_search_results(bm25_results, sem_results, k):
         scores[doc_id]['rrf_score'] = rrf_final_score(
             scores[doc_id]['bm25_rank'], scores[doc_id]['sem_rank'], k)
     results = sorted(list(scores.values()), key=lambda x: x['rrf_score'], reverse=True)
-    return results
+    return results[:limit]
 
 
 def combine_search_results(bm25_results, sem_results, alpha=0.5):
