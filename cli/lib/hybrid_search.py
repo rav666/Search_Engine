@@ -1,7 +1,7 @@
 import os
 
 from lib.llm import correct_spellings, rewrite_query, expand_query
-from lib.rerank import individual_rerank, batch_rerank
+from lib.rerank import individual_rerank, batch_rerank, cross_encoder_rerank
 from lib.search_utils import load_movies
 from .keyword_search import InvertedIndex
 from .semantic_search import ChunkedSemanticSearch
@@ -34,12 +34,17 @@ def rrf_search(query, k=60, limit=5, enhance=None, rerank_method=None):
         case "batch":
             results = batch_rerank(query, results)
             print(f"reranking top{limit} using batch rerank method")
+        case "cross-encoder":
+            results = cross_encoder_rerank(query, results)
+            print(f"reranking top{limit} using cross-encoder rerank method")
         case _:
             pass
 
-    for idx, result in enumerate(results[:rrf_limit]):
-        print(f'{idx + 1}: {result['title']}')
+    for idx, result in enumerate(results[:rrf_limit], start=1):
+        print(f'{idx}: {result['title']}')
         print(f"RRF SCORE:, {result['rrf_score']}")
+        if rerank_method:
+            print(f"cross encoder SCORE, {result['cross_encoder_score']}")
         print(f"BM25 rank:, {result['bm25_rank']}, Semantic rank: {result['sem_rank']} ")
         print(result['description'][:100])
 

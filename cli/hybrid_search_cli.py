@@ -20,7 +20,8 @@ def main() -> None:
 
     rrf_parser.add_argument("--enhance", type=str, choices=["spell", "rewrite", "expand"],
                             help="Query enhancement method", )
-    rrf_parser.add_argument("--rerank-method", type=str, choices=["individual", "batch"], help="rerank method")
+    rrf_parser.add_argument("--rerank-method", type=str, choices=["individual", "batch", "cross-encoder"],
+                            help="rerank method")
     args = parser.parse_args()
 
     match args.command:

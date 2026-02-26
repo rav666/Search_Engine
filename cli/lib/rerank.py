@@ -2,6 +2,7 @@ import json
 import os
 
 from dotenv import load_dotenv
+from sentence_transformers import CrossEncoder
 
 from lib.search_utils import PROMPT_PATH
 
@@ -52,4 +53,17 @@ def batch_rerank(query, documents):
     for idx, doc in enumerate(documents):
         results.append({**doc, 'rerank_score': response_parsed.index(idx)})
     results = sorted(results, key=lambda r: r['rerank_score'], reverse=False)
+    return results
+
+
+def cross_encoder_rerank(query, documents):
+    pairs = []
+    for doc in documents:
+        pairs.append([query, f"{doc.get('title', '')} - {doc.get('document', '')}"])
+    cross_encoder = CrossEncoder("cross-encoder/ms-marco-TinyBERT-L2-v2")
+    scores = cross_encoder.predict(pairs)
+    results = []
+    for idx, doc in enumerate(documents):
+        results.append({**doc, 'cross_encoder_score': scores[idx]})
+    results = sorted(results, key=lambda r: r['cross_encoder_score'], reverse=True)
     return results
